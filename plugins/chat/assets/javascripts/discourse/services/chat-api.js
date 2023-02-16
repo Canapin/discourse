@@ -10,6 +10,7 @@ import Collection from "../lib/collection";
  * @implements {@ember/service}
  */
 export default class ChatApi extends Service {
+  @service chat;
   @service chatChannelsManager;
 
   /**
@@ -24,6 +25,22 @@ export default class ChatApi extends Service {
   channel(channelId) {
     return this.#getRequest(`/channels/${channelId}`).then((result) =>
       this.chatChannelsManager.store(result.channel)
+    );
+  }
+
+  /**
+   * Get a thread in a channel by its ID.
+   * @param {number} channelId - The ID of the channel.
+   * @param {number} threadId - The ID of the thread.
+   * @returns {Promise}
+   *
+   * @example
+   *
+   *    this.chatApi.thread(5, 1).then(thread => { ... })
+   */
+  thread(channelId, threadId) {
+    return this.#getRequest(`/channels/${channelId}/threads/${threadId}`).then(
+      (result) => this.chat.activeChannel.threadsManager.store(result.thread)
     );
   }
 
